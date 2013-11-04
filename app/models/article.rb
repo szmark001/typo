@@ -73,23 +73,19 @@ class Article < Content
 
   def merge_with(other_id)
 
-    return false if self.id == other_id.to_i
-    
+    return if self.id == other_id.to_i
     other = Article.find_by_id other_id
-    
-    return false unless other
+    return if other.nil?
 
-    self.body = self.body.to_s + "\n----------------------\n" + other.body.to_s
+    self.body = self.body.to_s + "\n" + other.body.to_s
     other.comments.each do |c|
       self.comments << c
-      c.save!
     end
 
     other = Article.find_by_id other_id
-
     other.destroy
+    self.save!
 
-    return self.save!
   end
 
   def set_permalink
